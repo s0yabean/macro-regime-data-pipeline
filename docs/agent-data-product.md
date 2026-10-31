@@ -9,7 +9,7 @@ number, so it gets the strictest interface.
 | Property | How it is met |
 |---|---|
 | **Documented** | Every series has a catalog entry: provider, code, units, frequency, release lag, `exact`/`proxy` coverage, notes. Indicators map to series with a role (primary, secondary, supporting). |
-| **Health-checked** | `pipeline/check_health.py` runs eight SQL checks and exits non-zero on any failure. The JSON output names the failing rows, so the agent can say exactly what is wrong. |
+| **Health-checked** | `pipeline/check_health.py` runs nine SQL checks and exits non-zero on any failure. The JSON output names the failing rows, so the agent can say exactly what is wrong. |
 | **Point-in-time by default** | The only query tool the agent is given (`pipeline/query_as_of.py`) filters on `available_at`. It cannot accidentally read data from after the date it is asked about. |
 | **Read-only** | Health and query scripts open the database with `mode=ro`. |
 | **Provenance in every answer** | Rows carry `observation_date`, `available_at`, `coverage_status` and `source_url`; the skill tells the agent to report them. |

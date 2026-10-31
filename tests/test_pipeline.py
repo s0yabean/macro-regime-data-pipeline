@@ -90,13 +90,39 @@ class DatasetTests(unittest.TestCase):
             bad = str(Path(tmp) / "bad.db")
             Path(bad).write_bytes(Path(self.db).read_bytes())
             c = sqlite3.connect(bad)
-            # Simulate the classic bug: CPI stored as available on its label date.
+            # No lag at all: CPI stored as available on its label date.
             c.execute("UPDATE raw_observations SET available_at = observation_date WHERE series_id = 'FRED:CPIAUCSL'")
             c.commit()
             c.close()
             report = run_checks(bad, "2025-12-31")
         status = {ch["name"]: ch["status"] for ch in report["checks"]}
         self.assertEqual(status["lag_respected"], "FAIL")
+        self.assertFalse(report["all_checks_passed"])
+
+    def test_health_check_catches_lag_counted_from_label_date(self):
+        # The subtler bug: available_at = label date + lag. lag_respected passes this
+        # exactly; lag_from_period_end must flag it.
+        good = {ch["name"]: ch["status"] for ch in run_checks(self.db, "2025-12-31")["checks"]}
+        self.assertEqual(good["lag_from_period_end"], "PASS")
+        with tempfile.TemporaryDirectory() as tmp:
+            bad = str(Path(tmp) / "label_date.db")
+            Path(bad).write_bytes(Path(self.db).read_bytes())
+            c = sqlite3.connect(bad)
+            c.execute(
+                """
+                UPDATE raw_observations
+                SET available_at = date(observation_date, '+' || (
+                  SELECT release_lag_days FROM series_catalog sc
+                  WHERE sc.series_id = raw_observations.series_id) || ' days')
+                WHERE frequency_observed = 'monthly'
+                """
+            )
+            c.commit()
+            c.close()
+            report = run_checks(bad, "2025-12-31")
+        status = {ch["name"]: ch["status"] for ch in report["checks"]}
+        self.assertEqual(status["lag_respected"], "PASS")
+        self.assertEqual(status["lag_from_period_end"], "FAIL")
         self.assertFalse(report["all_checks_passed"])
 
     def test_schema_rejects_available_before_observation(self):

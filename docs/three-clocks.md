@@ -62,10 +62,13 @@ flowchart LR
    that is reviewed like any other.
 3. **The database refuses impossible rows.** `raw_observations` has
    `CHECK (available_at >= observation_date)`.
-4. **The health checks verify it after the fact.** `no_lookahead` and `lag_respected`
-   in [`sql/health_checks.sql`](../sql/health_checks.sql) fail if any stored row is
-   available earlier than its catalog lag allows (for example, if someone loads CPI
-   with `available_at = observation_date`).
+4. **The health checks verify it after the fact.** In
+   [`sql/health_checks.sql`](../sql/health_checks.sql), `no_lookahead` and
+   `lag_respected` fail if a row is available before its label date plus the catalog lag
+   (for example, CPI loaded with `available_at = observation_date`).
+   `lag_from_period_end` measures from the end of the period instead, so it also catches
+   the subtler bug: a lag added to the label date (CPI for September available on
+   2025-09-15). `lag_respected` alone passes that rule exactly.
 5. **Readers only get point-in-time queries.**
    [`sql/point_in_time.sql`](../sql/point_in_time.sql) and
    [`pipeline/query_as_of.py`](../pipeline/query_as_of.py) return, per series, the

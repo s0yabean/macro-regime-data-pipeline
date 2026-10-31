@@ -42,7 +42,7 @@ flowchart LR
 
     AV["compute_available_at()<br/>period end + release lag"]
     DB[("SQLite<br/>raw_observations<br/>observation_date + available_at")]
-    HC{"check_health.py<br/>8 SQL checks"}
+    HC{"check_health.py<br/>9 SQL checks"}
 
     subgraph READ["Readers: available_at <= as_of"]
         Q["query_as_of.py /<br/>sql/point_in_time.sql"]
@@ -72,7 +72,8 @@ flowchart LR
   explains itself. [docs/data-sources.md](docs/data-sources.md) covers the indicator map
   and source decisions.
 - **Health checks in SQL.** [`sql/health_checks.sql`](sql/health_checks.sql): ISO dates,
-  no value available before its period, catalog lag respected, observed frequency
+  no value available before its period, catalog lag respected, monthly and quarterly lags
+  counted from the end of the period (not the label date), observed frequency
   matches catalog, every active series has rows, nothing stale for its frequency, no
   non-positive prices, last ingestion run per provider succeeded. Each check returns the
   failing rows, so an empty result is a pass.
@@ -88,11 +89,11 @@ Measured by running this repo (Python 3.9, macOS):
 
 | What | Result |
 |---|---|
-| Unit tests (`python -m unittest discover -s tests`) | 14 pass, about 4 s, no network |
-| Synthetic sample (`make_synthetic_sample.py`, 2 years) | 53 active series, 22,887 rows, 8 of 8 health checks pass |
-| Keyless real-data run (5 yfinance series from 2024-01-01) | 3,881 rows in about 6 s, 8 of 8 checks pass |
+| Unit tests (`python -m unittest discover -s tests`) | 15 pass, about 3 s, no network |
+| Synthetic sample (`make_synthetic_sample.py`, 2 years) | 53 active series, 22,887 rows, 9 of 9 health checks pass |
+| Keyless real-data run (5 yfinance series from 2024-01-01) | 3,881 rows in about 6 s, 9 of 9 checks pass |
 | Lookahead guard | As of 2025-10-10 the point-in-time query returns August CPI (available 2025-09-14), not September CPI (available 2025-10-14). A naive label-date rule would have exposed September CPI from 2025-09-15. |
-| Lag-violation detection | Setting CPI's `available_at` to its label date makes `lag_respected` fail and `check_health.py` exit 1 (covered by a test) |
+| Lag-violation detection | Storing CPI with no lag (`available_at` = label date) makes `lag_respected` fail. The subtler bug, label date + lag, passes `lag_respected` exactly; `lag_from_period_end` flags all 191 monthly rows of the sample built that way and none of the correct sample. Both cases are covered by tests, and `check_health.py` exits 1 |
 
 Backtest numbers on the synthetic universe are random-walk output and say nothing about
 any real strategy.
@@ -139,7 +140,7 @@ Keys are read from environment variables; see [`.env.example`](.env.example). To
 config/series_catalog.yaml     55 series, 16 indicators, lags, units, coverage
 sql/schema.sql                 providers, catalog, indicators, ingestion_runs, raw_observations
 sql/point_in_time.sql          as-of snapshot query
-sql/health_checks.sql          8 checks + coverage summary
+sql/health_checks.sql          9 checks + coverage summary
 pipeline/
   _common.py                   compute_available_at, catalog seeding, shared ingest loop
   ingest_yfinance.py           Yahoo Finance daily closes (no key)
@@ -165,7 +166,7 @@ tests/                         offline unit tests
   rule that stops monthly series from leaking. It lives in one function and every
   ingester calls it.
 - **Lags in the catalog, not in code.** Each assumption is visible and reviewable, and
-  `lag_respected` checks stored rows against it.
+  `lag_respected` and `lag_from_period_end` check stored rows against it.
 - **Strict intersection for derived series.** Stablecoin supply is written only on days
   where both USDT and USDC exist. Missing days show up as coverage below 100% rather than
   as fake drops.

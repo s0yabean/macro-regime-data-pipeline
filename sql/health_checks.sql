@@ -43,6 +43,23 @@ JOIN series_catalog sc ON sc.series_id = ro.series_id
 WHERE julianday(ro.available_at) - julianday(ro.observation_date) < sc.release_lag_days
 LIMIT 20;
 
+-- check: lag_from_period_end | Monthly/quarterly rows must not be available before period end + catalog release lag
+-- lag_respected measures from observation_date, which for monthly and quarterly series is
+-- the label at the START of the period. A rule that adds the lag to the label date passes
+-- it exactly while exposing each value about a month early. This check measures from the
+-- end of the period instead (FRED labels a month on its 1st and a quarter on its first day).
+SELECT ro.series_id, ro.observation_date, ro.available_at, sc.release_lag_days,
+  date(ro.observation_date, 'start of month',
+       CASE ro.frequency_observed WHEN 'quarterly' THEN '+3 months' ELSE '+1 month' END,
+       '-1 day', '+' || sc.release_lag_days || ' days') AS earliest_allowed
+FROM raw_observations ro
+JOIN series_catalog sc ON sc.series_id = ro.series_id
+WHERE ro.frequency_observed IN ('monthly', 'quarterly')
+  AND ro.available_at < date(ro.observation_date, 'start of month',
+       CASE ro.frequency_observed WHEN 'quarterly' THEN '+3 months' ELSE '+1 month' END,
+       '-1 day', '+' || sc.release_lag_days || ' days')
+LIMIT 20;
+
 -- check: frequency_matches_catalog | Observed frequency must match the catalog's native frequency
 SELECT
   sc.series_id,
