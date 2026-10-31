@@ -1,0 +1,24 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+!.env.example
+.DS_Store
+.vscode/
+.idea/
+
+# Databases and downloaded data are never committed
+data/
+backtesting/data/
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+*.parquet
+*.feather
+*.pkl
+*.csv
+!examples/*_SYNTHETIC.csv

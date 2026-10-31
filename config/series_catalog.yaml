@@ -1,0 +1,673 @@
+# Series catalog: the single source of truth for what the pipeline ingests.
+#
+# Every series declares its native frequency and a release lag. The lag is counted
+# from the END of the observation period (see docs/three-clocks.md), so a monthly
+# CPI print dated 2025-09-01 with release_lag_days: 14 becomes available on
+# 2025-09-30 + 14 days = 2025-10-14.
+#
+# Optional per-series fields regime_code (R1-R4) / regime_label (Reflation, Stagflation,
+# Goldilocks, Recession) let you tag assets with a growth x inflation quadrant. They are
+# left blank here: which assets belong to which regime is a strategy decision, not data.
+providers:
+- provider_id: FRED
+  provider_name: Federal Reserve Economic Data
+  base_url: https://fred.stlouisfed.org
+- provider_id: COINGECKO
+  provider_name: CoinGecko API
+  base_url: https://pro-api.coingecko.com/api/v3
+- provider_id: YFINANCE
+  provider_name: Yahoo Finance (yfinance)
+  base_url: https://finance.yahoo.com
+- provider_id: COINRANKING
+  provider_name: Coinranking API (long-history crypto exports)
+  base_url: https://api.coinranking.com/v2
+- provider_id: MANUAL
+  provider_name: Staged CSV (monthly prints copied from public releases)
+  base_url: null
+series:
+- series_id: FRED:WALCL
+  provider_id: FRED
+  external_code: WALCL
+  display_name: Fed Total Assets
+  series_domain: indicator
+  native_frequency: weekly
+  units: Millions USD
+  coverage_status: exact
+  release_lag_days: 7
+- series_id: FRED:WTREGEN
+  provider_id: FRED
+  external_code: WTREGEN
+  display_name: Treasury General Account
+  series_domain: indicator
+  native_frequency: weekly
+  units: Millions USD
+  coverage_status: exact
+  release_lag_days: 7
+- series_id: FRED:RRPONTSYD
+  provider_id: FRED
+  external_code: RRPONTSYD
+  display_name: Overnight Reverse Repo
+  series_domain: indicator
+  native_frequency: daily
+  units: Millions USD (normalized on ingest)
+  coverage_status: exact
+  release_lag_days: 1
+  notes: Source series is in billions USD; ingest script multiplies by 1000 before writing raw_observations.
+- series_id: FRED:M2SL
+  provider_id: FRED
+  external_code: M2SL
+  display_name: US M2 Money Supply
+  series_domain: indicator
+  native_frequency: monthly
+  units: Billions USD
+  coverage_status: proxy
+  release_lag_days: 28
+- series_id: FRED:CPIAUCSL
+  provider_id: FRED
+  external_code: CPIAUCSL
+  display_name: CPI All Urban Consumers
+  series_domain: indicator
+  native_frequency: monthly
+  units: Index
+  coverage_status: exact
+  release_lag_days: 14
+- series_id: FRED:DTWEXBGS
+  provider_id: FRED
+  external_code: DTWEXBGS
+  display_name: Broad Dollar Index
+  series_domain: indicator
+  native_frequency: daily
+  units: Index
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: FRED:BAMLH0A0HYM2
+  provider_id: FRED
+  external_code: BAMLH0A0HYM2
+  display_name: HY Credit Spread OAS
+  series_domain: indicator
+  native_frequency: daily
+  units: Percent
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: FRED:FEDFUNDS
+  provider_id: FRED
+  external_code: FEDFUNDS
+  display_name: Effective Fed Funds Rate
+  series_domain: indicator
+  native_frequency: monthly
+  units: Percent
+  coverage_status: proxy
+  release_lag_days: 14
+- series_id: FRED:DFII10
+  provider_id: FRED
+  external_code: DFII10
+  display_name: 10Y Real Yield
+  series_domain: indicator
+  native_frequency: daily
+  units: Percent
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: FRED:PCOPPUSDM
+  provider_id: FRED
+  external_code: PCOPPUSDM
+  display_name: Global Copper Price
+  series_domain: indicator
+  native_frequency: monthly
+  units: USD per Metric Ton
+  coverage_status: exact
+  release_lag_days: 30
+- series_id: FRED:DCOILWTICO
+  provider_id: FRED
+  external_code: DCOILWTICO
+  display_name: WTI Crude Spot
+  series_domain: indicator
+  native_frequency: daily
+  units: USD per Barrel
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: FRED:DCOILBRENTEU
+  provider_id: FRED
+  external_code: DCOILBRENTEU
+  display_name: Brent Crude Spot
+  series_domain: indicator
+  native_frequency: daily
+  units: USD per Barrel
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: FRED:T10Y2Y
+  provider_id: FRED
+  external_code: T10Y2Y
+  display_name: 10Y minus 2Y Treasury Spread
+  series_domain: transition
+  native_frequency: daily
+  units: Percent
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: FRED:VIXCLS
+  provider_id: FRED
+  external_code: VIXCLS
+  display_name: VIX Close
+  series_domain: transition
+  native_frequency: daily
+  units: Index
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: FRED:GS10
+  provider_id: FRED
+  external_code: GS10
+  display_name: 10Y Treasury Constant Maturity Rate
+  series_domain: risk_free
+  native_frequency: monthly
+  units: Percent
+  coverage_status: proxy
+  release_lag_days: 14
+- series_id: FRED:TB3MS
+  provider_id: FRED
+  external_code: TB3MS
+  display_name: 3-Month T-Bill Secondary Market Rate
+  series_domain: risk_free
+  native_frequency: monthly
+  units: Percent
+  coverage_status: exact
+  release_lag_days: 14
+- series_id: CRYPTO:BTC_DOMINANCE_PCT
+  provider_id: COINGECKO
+  external_code: BTC_DOMINANCE_PCT
+  display_name: BTC Dominance Percentage
+  series_domain: indicator
+  native_frequency: daily
+  units: Percent
+  coverage_status: exact
+  release_lag_days: 0
+  notes: Derived daily as BTC market cap / total crypto market cap * 100 from CoinGecko endpoints.
+- series_id: CRYPTO:USDT_MARKET_CAP_USD
+  provider_id: COINGECKO
+  external_code: USDT_MARKET_CAP_USD
+  display_name: USDT Market Cap
+  series_domain: indicator
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+  is_active: false
+  notes: Component of CRYPTO:STABLECOIN_SUPPLY_USD. Kept in the catalog for lineage, not ingested by default.
+- series_id: CRYPTO:USDC_MARKET_CAP_USD
+  provider_id: COINGECKO
+  external_code: USDC_MARKET_CAP_USD
+  display_name: USDC Market Cap
+  series_domain: indicator
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+  is_active: false
+  notes: Component of CRYPTO:STABLECOIN_SUPPLY_USD. Kept in the catalog for lineage, not ingested by default.
+- series_id: CRYPTO:STABLECOIN_SUPPLY_USD
+  provider_id: COINGECKO
+  external_code: STABLECOIN_SUPPLY_USD
+  display_name: Stablecoin Supply (USDT + USDC)
+  series_domain: indicator
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+  notes: Derived daily as USDT market cap + USDC market cap. A day is kept only when both components are
+    present (no zero-fill, no imputation).
+- series_id: YF:DX-Y.NYB
+  provider_id: YFINANCE
+  external_code: DX-Y.NYB
+  display_name: ICE US Dollar Index
+  series_domain: indicator
+  native_frequency: daily
+  units: Index
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:GC=F
+  provider_id: YFINANCE
+  external_code: GC=F
+  display_name: Gold Futures
+  series_domain: indicator
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:SI=F
+  provider_id: YFINANCE
+  external_code: SI=F
+  display_name: Silver Futures
+  series_domain: indicator
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:HG=F
+  provider_id: YFINANCE
+  external_code: HG=F
+  display_name: Copper Futures
+  series_domain: indicator
+  native_frequency: daily
+  units: USD per Pound
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:CL=F
+  provider_id: YFINANCE
+  external_code: CL=F
+  display_name: WTI Futures
+  series_domain: indicator
+  native_frequency: daily
+  units: USD per Barrel
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:BZ=F
+  provider_id: YFINANCE
+  external_code: BZ=F
+  display_name: Brent Futures
+  series_domain: indicator
+  native_frequency: daily
+  units: USD per Barrel
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:^GSPC
+  provider_id: YFINANCE
+  external_code: ^GSPC
+  display_name: S&P 500 Index
+  series_domain: benchmark
+  native_frequency: daily
+  units: Index
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:^VIX
+  provider_id: YFINANCE
+  external_code: ^VIX
+  display_name: CBOE VIX Index
+  series_domain: transition
+  native_frequency: daily
+  units: Index
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:BTC-USD
+  provider_id: YFINANCE
+  external_code: BTC-USD
+  display_name: Bitcoin USD
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:ETH-USD
+  provider_id: YFINANCE
+  external_code: ETH-USD
+  display_name: Ethereum USD
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:QQQ
+  provider_id: YFINANCE
+  external_code: QQQ
+  display_name: Invesco QQQ ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:SLV
+  provider_id: YFINANCE
+  external_code: SLV
+  display_name: iShares Silver Trust
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:COPX
+  provider_id: YFINANCE
+  external_code: COPX
+  display_name: Global X Copper Miners ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:XLE
+  provider_id: YFINANCE
+  external_code: XLE
+  display_name: Energy Select Sector SPDR
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:UUP
+  provider_id: YFINANCE
+  external_code: UUP
+  display_name: Invesco DB US Dollar ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:XOP
+  provider_id: YFINANCE
+  external_code: XOP
+  display_name: SPDR Oil & Gas E&P ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:TIP
+  provider_id: YFINANCE
+  external_code: TIP
+  display_name: iShares TIPS Bond ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:SGOV
+  provider_id: YFINANCE
+  external_code: SGOV
+  display_name: iShares 0-3 Month Treasury ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:GLD
+  provider_id: YFINANCE
+  external_code: GLD
+  display_name: SPDR Gold Shares
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:SPY
+  provider_id: YFINANCE
+  external_code: SPY
+  display_name: SPDR S&P 500 ETF
+  series_domain: benchmark
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:GDX
+  provider_id: YFINANCE
+  external_code: GDX
+  display_name: VanEck Gold Miners ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:FCX
+  provider_id: YFINANCE
+  external_code: FCX
+  display_name: Freeport-McMoRan
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:PDBC
+  provider_id: YFINANCE
+  external_code: PDBC
+  display_name: Invesco Optimum Yield Diversified Commodity Strategy ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:TLT
+  provider_id: YFINANCE
+  external_code: TLT
+  display_name: iShares 20+ Year Treasury Bond ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:IAU
+  provider_id: YFINANCE
+  external_code: IAU
+  display_name: iShares Gold Trust
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:SCHD
+  provider_id: YFINANCE
+  external_code: SCHD
+  display_name: Schwab US Dividend Equity ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:LQD
+  provider_id: YFINANCE
+  external_code: LQD
+  display_name: iShares Investment Grade Corporate Bond ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:IEF
+  provider_id: YFINANCE
+  external_code: IEF
+  display_name: iShares 7-10 Year Treasury Bond ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:GDXJ
+  provider_id: YFINANCE
+  external_code: GDXJ
+  display_name: VanEck Junior Gold Miners ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:XOM
+  provider_id: YFINANCE
+  external_code: XOM
+  display_name: Exxon Mobil
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:IBIT
+  provider_id: YFINANCE
+  external_code: IBIT
+  display_name: iShares Bitcoin Trust ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:SOXX
+  provider_id: YFINANCE
+  external_code: SOXX
+  display_name: iShares Semiconductor ETF
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: YF:DBC
+  provider_id: YFINANCE
+  external_code: DBC
+  display_name: Invesco DB Commodity Index Tracking Fund
+  series_domain: asset
+  native_frequency: daily
+  units: USD
+  coverage_status: exact
+  release_lag_days: 0
+- series_id: MANUAL:ISM_PMI
+  provider_id: MANUAL
+  external_code: ISM_PMI
+  display_name: ISM Manufacturing PMI
+  series_domain: indicator
+  native_frequency: monthly
+  units: Index points
+  coverage_status: exact
+  release_lag_days: 1
+  notes: No free API. Loaded from a staged CSV with pipeline/ingest_csv.py. Released on the first business
+    day of the following month.
+- series_id: MANUAL:CB_GOLD_NET_TONNES
+  provider_id: MANUAL
+  external_code: CB_GOLD_NET_TONNES
+  display_name: Central Bank Net Gold Purchases
+  series_domain: indicator
+  native_frequency: monthly
+  units: Tonnes
+  coverage_status: proxy
+  release_lag_days: 60
+  notes: Monthly reserve-change totals are published roughly two months in arrears. Loaded from a staged
+    CSV.
+indicators:
+- indicator_code: L1
+  indicator_name: US M2 Money Supply
+  axis: liquidity
+  scored: true
+  series_map:
+  - series_id: FRED:M2SL
+    role: primary
+- indicator_code: L2
+  indicator_name: Fed Net Liquidity
+  axis: liquidity
+  scored: true
+  series_map:
+  - series_id: FRED:WALCL
+    role: primary
+  - series_id: FRED:WTREGEN
+    role: secondary
+  - series_id: FRED:RRPONTSYD
+    role: secondary
+- indicator_code: L3
+  indicator_name: US Dollar Index
+  axis: liquidity
+  scored: true
+  series_map:
+  - series_id: FRED:DTWEXBGS
+    role: primary
+  - series_id: YF:DX-Y.NYB
+    role: secondary
+- indicator_code: L4
+  indicator_name: HY Credit Spreads
+  axis: liquidity
+  scored: true
+  series_map:
+  - series_id: FRED:BAMLH0A0HYM2
+    role: primary
+- indicator_code: L5
+  indicator_name: Central Bank Policy (Fed Funds proxy)
+  axis: liquidity
+  scored: true
+  series_map:
+  - series_id: FRED:FEDFUNDS
+    role: primary
+- indicator_code: I1
+  indicator_name: CPI 3M Annualised
+  axis: inflation
+  scored: true
+  series_map:
+  - series_id: FRED:CPIAUCSL
+    role: primary
+- indicator_code: I2
+  indicator_name: 10Y Real Yield
+  axis: inflation
+  scored: true
+  series_map:
+  - series_id: FRED:DFII10
+    role: primary
+  - series_id: FRED:GS10
+    role: supporting
+- indicator_code: I3
+  indicator_name: Copper and Copper/Gold Ratio
+  axis: inflation
+  scored: true
+  series_map:
+  - series_id: FRED:PCOPPUSDM
+    role: primary
+  - series_id: YF:HG=F
+    role: secondary
+  - series_id: YF:GC=F
+    role: secondary
+- indicator_code: I4
+  indicator_name: Oil (WTI/Brent)
+  axis: inflation
+  scored: true
+  series_map:
+  - series_id: FRED:DCOILWTICO
+    role: primary
+  - series_id: FRED:DCOILBRENTEU
+    role: secondary
+  - series_id: YF:CL=F
+    role: secondary
+  - series_id: YF:BZ=F
+    role: secondary
+- indicator_code: T1
+  indicator_name: Yield Curve 10Y-2Y
+  axis: transition
+  scored: false
+  series_map:
+  - series_id: FRED:T10Y2Y
+    role: primary
+- indicator_code: T2
+  indicator_name: ISM Manufacturing PMI
+  axis: transition
+  scored: false
+  series_map:
+  - series_id: MANUAL:ISM_PMI
+    role: primary
+- indicator_code: T3
+  indicator_name: VIX
+  axis: transition
+  scored: false
+  series_map:
+  - series_id: FRED:VIXCLS
+    role: primary
+  - series_id: YF:^VIX
+    role: secondary
+- indicator_code: C1
+  indicator_name: BTC Dominance
+  axis: crypto
+  scored: false
+  series_map:
+  - series_id: CRYPTO:BTC_DOMINANCE_PCT
+    role: primary
+- indicator_code: C2
+  indicator_name: Stablecoin Supply
+  axis: crypto
+  scored: false
+  series_map:
+  - series_id: CRYPTO:STABLECOIN_SUPPLY_USD
+    role: primary
+  - series_id: CRYPTO:USDT_MARKET_CAP_USD
+    role: supporting
+  - series_id: CRYPTO:USDC_MARKET_CAP_USD
+    role: supporting
+- indicator_code: P1
+  indicator_name: Gold/Silver Ratio
+  axis: precious_metals
+  scored: false
+  series_map:
+  - series_id: YF:GC=F
+    role: primary
+  - series_id: YF:SI=F
+    role: secondary
+- indicator_code: P2
+  indicator_name: Central Bank Gold Purchases
+  axis: precious_metals
+  scored: false
+  series_map:
+  - series_id: MANUAL:CB_GOLD_NET_TONNES
+    role: primary

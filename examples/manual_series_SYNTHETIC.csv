@@ -1,0 +1,11 @@
+series_id,observation_date,value,source_url
+MANUAL:ISM_PMI,2025-01-01,50.1,synthetic://example
+MANUAL:ISM_PMI,2025-02-01,49.6,synthetic://example
+MANUAL:ISM_PMI,2025-03-01,48.9,synthetic://example
+MANUAL:ISM_PMI,2025-04-01,48.2,synthetic://example
+MANUAL:ISM_PMI,2025-05-01,48.8,synthetic://example
+MANUAL:ISM_PMI,2025-06-01,49.3,synthetic://example
+MANUAL:CB_GOLD_NET_TONNES,2025-01-01,18.0,synthetic://example
+MANUAL:CB_GOLD_NET_TONNES,2025-02-01,24.5,synthetic://example
+MANUAL:CB_GOLD_NET_TONNES,2025-03-01,15.2,synthetic://example
+MANUAL:CB_GOLD_NET_TONNES,2025-04-01,12.7,synthetic://example
