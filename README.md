@@ -1,5 +1,7 @@
 # macro-regime-data-pipeline
 
+[![CI](https://github.com/s0yabean/macro-regime-data-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/s0yabean/macro-regime-data-pipeline/actions/workflows/ci.yml)
+
 A point-in-time macro and market dataset (FRED, Yahoo Finance, CoinGecko, Coinranking,
 staged CSVs into SQLite) with release-lag handling, SQL health checks, an agent skill
 that queries it safely, and two small backtesters.
