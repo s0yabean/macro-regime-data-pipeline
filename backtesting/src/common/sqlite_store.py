@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sqlite3
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Sequence
+from typing import Any, Dict, Sequence
 
 
 def connect(db_path: str) -> sqlite3.Connection:

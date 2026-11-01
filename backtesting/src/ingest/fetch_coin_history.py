@@ -9,14 +9,14 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Iterable, List, Sequence
+from typing import Dict, List, Sequence
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from src.common.coingecko import CoinGeckoClient, iter_time_chunks
-from src.common.sqlite_store import (
+from src.common.coingecko import CoinGeckoClient, iter_time_chunks  # noqa: E402
+from src.common.sqlite_store import (  # noqa: E402
     apply_schema,
     connect,
     upsert_market_metrics,

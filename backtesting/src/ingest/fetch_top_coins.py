@@ -13,8 +13,8 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from src.common.coingecko import CoinGeckoClient, build_curl_command
-from src.common.sqlite_store import apply_schema, connect, insert_top_snapshot, upsert_coins
+from src.common.coingecko import CoinGeckoClient, build_curl_command  # noqa: E402
+from src.common.sqlite_store import apply_schema, connect, insert_top_snapshot, upsert_coins  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:

@@ -48,7 +48,7 @@ def main() -> int:
     try:
         import yfinance as yf
     except ImportError as exc:
-        raise SystemExit(f"yfinance is required: pip install -r requirements.txt ({exc})")
+        raise SystemExit(f"yfinance is required: pip install -r requirements.txt ({exc})") from exc
 
     config = load_config(args.config_path)
     series = select_series(config, "YFINANCE", parse_csv_list(args.series))
