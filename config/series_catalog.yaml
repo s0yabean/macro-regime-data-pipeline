@@ -556,9 +556,9 @@ indicators:
   axis: liquidity
   scored: true
   series_map:
-  - series_id: FRED:DTWEXBGS
-    role: primary
   - series_id: YF:DX-Y.NYB
+    role: primary
+  - series_id: FRED:DTWEXBGS
     role: secondary
 - indicator_code: L4
   indicator_name: HY Credit Spreads

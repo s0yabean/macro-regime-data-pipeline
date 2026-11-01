@@ -18,7 +18,7 @@ transition, crypto and precious metals.
 |---|---|---|---|---|
 | L1 | US M2 money supply | liquidity | `FRED:M2SL` | |
 | L2 | Fed net liquidity | liquidity | `FRED:WALCL` | `FRED:WTREGEN`, `FRED:RRPONTSYD` |
-| L3 | US dollar index | liquidity | `FRED:DTWEXBGS` | `YF:DX-Y.NYB` |
+| L3 | US dollar index | liquidity | `YF:DX-Y.NYB` | `FRED:DTWEXBGS` |
 | L4 | High-yield credit spreads | liquidity | `FRED:BAMLH0A0HYM2` | |
 | L5 | Policy rate (Fed funds proxy) | liquidity | `FRED:FEDFUNDS` | |
 | I1 | CPI 3-month annualised | inflation | `FRED:CPIAUCSL` | |
@@ -47,6 +47,11 @@ say so when using it.
 FRED reports the first two in millions of USD and the reverse repo in billions.
 `ingest_fred.py` multiplies RRPONTSYD by 1,000 before writing, so the three
 components can be combined without a unit bug.
+
+**Two series share the name "dollar index".** `YF:DX-Y.NYB` is the market ICE index (about
+100 in March 2026). `FRED:DTWEXBGS` is the Fed's nominal broad index (about 120 on the same
+dates). Both values are correct; they measure different baskets. The market index is primary
+because that is the one the framework means, and the broad index stays as the fallback.
 
 **London gold fix is gone from FRED.** FRED removed the ICE Benchmark Administration
 series (including `GOLDAMGBD228NLBM`) in 2022
