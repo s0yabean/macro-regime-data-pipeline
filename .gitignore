@@ -22,3 +22,4 @@ backtesting/data/
 *.pkl
 *.csv
 !examples/*_SYNTHETIC.csv
+.ruff_cache/
